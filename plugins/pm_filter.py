@@ -908,16 +908,34 @@ if imdb and imdb.get('poster'):
         except Exception as e:
             logger.exception(e)
             no_pic=await message.reply_photo(photo=NOR_IMG, caption=cap, reply_markup=InlineKeyboardMarkup(btn))
-            if settings["auto_delete"]:
-                await asyncio.sleep(600)
-                await no_pic.delete()
-                await message.delete()
+            try:
+                if settings['auto_delete']:
+                    await asyncio.sleep(200)
+                    await no_pic.delete()
+                    await message.delete()
+            except KeyError:
+                grpid = await active_connection(str(message.from_user.id))
+                await save_group_settings(grpid, 'auto_delete', True)
+                settings = await get_settings(message.chat.id)
+                if settings['auto_delete']:
+                    await asyncio.sleep(200)
+                    await no_pic.delete()
+                    await message.delete()
     else:
-        no_fil=await message.reply_photo(photo=NOR_IMG, caption=cap, reply_markup=InlineKeyboardMarkup(btn)
-        if settings["auto_delete"]:
-            await asyncio.sleep(600)
-            await no_fil.delete()
-            await message.delete()
+        no_fil=await message.reply_photo(photo=NOR_IMG, caption=cap, reply_markup=InlineKeyboardMarkup(btn))
+        try:
+            if settings['auto_delete']:
+                await asyncio.sleep(200)
+                await no_fil.delete()
+                await message.delete()
+        except KeyError:
+            grpid = await active_connection(str(message.from_user.id))
+            await save_group_settings(grpid, 'auto_delete', True)
+            settings = await get_settings(message.chat.id)
+            if settings['auto_delete']:
+                await asyncio.sleep(200)
+                await no_fil.delete()
+                await message.delete()
     if spoll:
         await msg.message.delete()
 
